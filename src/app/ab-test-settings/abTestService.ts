@@ -17,6 +17,10 @@ export const generateIdeas = async () => {
     }),
   });
 
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
   const data = await response.json();
   const aiIdeas = data.choices?.[0]?.message?.content;
   return aiIdeas;

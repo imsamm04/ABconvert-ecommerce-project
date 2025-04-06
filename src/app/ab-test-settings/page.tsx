@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { generateIdeas } from './abTestService';
 import { Spinner } from '@/components/ui/spinner';
 import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/use-toast';
 
 export default function ABTestSettings() {
   const [version, setVersion] = useState('A');
@@ -47,10 +48,29 @@ export default function ABTestSettings() {
 
   const handleGenerateIdeas = async () => {
     setLoading(true);
-    const ideas = await generateIdeas();
-    setAiIdeas(ideas);
-    setShowResult(true);
-    setLoading(false);
+    try {
+      const ideas = await generateIdeas();
+      setAiIdeas(ideas);
+      setShowResult(true);
+    } catch (error: any) {
+      if (error.message.includes('401')) {
+        toast({
+          title: 'Unauthorized',
+          description: 'Failed to generate ideas. Please check and add your OpenAI API key in the .env file.',
+          variant: 'destructive',
+          duration: 5000
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: 'An unexpected error occurred. Please try again later.',
+          variant: 'destructive',
+          duration: 5000
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleOpenDialog = () => {
@@ -65,7 +85,7 @@ export default function ABTestSettings() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className={`text-3xl font-extrabold mb-6 text-center ${version === 'A' ? 'text-blue-600' : 'text-green-600'} dark:text-white`}>A/B Test Settings</h1>
-      <div className="flex justify-center mb-6 gap-4">
+      <div className="flex flex-col md:flex-row justify-center mb-6 gap-4">
         {/* <Button
           onClick={() => localStorage.clear()}
           className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition"

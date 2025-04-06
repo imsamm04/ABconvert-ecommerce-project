@@ -4,9 +4,11 @@ import ButtonLogout from '@/components/button-logout'
 import { ModeToggle } from '@/components/mode-toggle'
 import Link from 'next/link'
 import { ShoppingCart } from 'lucide-react'
+import { Copy } from '@mynaui/icons-react'
 import { useCartStore } from '@/store/cart'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 
 export default function Header() {
   const { user } = useAppContext()
@@ -22,13 +24,16 @@ export default function Header() {
     <header className='border-b'>
       <div className='container mx-auto px-4'>
         <div className='flex items-center justify-between h-16'>
-          <Link href='/' className='text-xl font-bold'>
-            ABconvert Store
+          <Link href='/' className='flex items-center'>
+            <Image src='/images/logo.png' alt='AB Store Logo' width={40} height={40} />
           </Link>
           <div className='flex items-center gap-4'>
             {pathname !== '/ab-test-settings' && (
               <Link href="/ab-test-settings" className="hover:text-primary">
-                <Button variant="ghost">Switch to AB Test</Button>
+                <Button variant="ghost" className="flex items-center">
+                  <span className="hidden md:inline">Switch to AB Test</span>
+                  <Copy className="md:hidden" />
+                </Button>
               </Link>
             )}
             <Link href="/cart" className="relative hover:text-primary">
