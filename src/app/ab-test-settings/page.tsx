@@ -166,7 +166,7 @@ export default function ABTestSettings() {
           {loading ? <Spinner /> : 'Generate A/B Test Ideas with OPEN AI'}
         </Button>
         <Button onClick={clearLocalStorage} className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition">
-        Refresh local storage
+        Clear Local Storage
       </Button>
       </div>
 

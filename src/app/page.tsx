@@ -107,15 +107,6 @@ export default function Home() {
 
   const productItemClass = campaignStyle === 'blackfriday' ? 'group border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 dark:bg-gray-800 bg-black text-white' : campaignStyle === 'christmas' ? 'group border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 dark:bg-green-800 bg-primary text-white' : 'group border rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 dark:bg-gray-800'
 
-  const clearLocalStorage = () => {
-    const hasSeenWelcomePopup = localStorage.getItem('hasSeenWelcomePopup');
-    localStorage.clear();
-    if (hasSeenWelcomePopup) {
-      localStorage.setItem('hasSeenWelcomePopup', hasSeenWelcomePopup);
-    }
-    window.location.reload();
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-4">
@@ -203,9 +194,6 @@ export default function Home() {
           </Button>
         </DialogContent>
       </Dialog>
-      <Button onClick={clearLocalStorage} className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition">
-        Clear Local Storage
-      </Button>
     </div>
   )
 }
