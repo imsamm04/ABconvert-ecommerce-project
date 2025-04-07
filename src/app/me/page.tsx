@@ -14,8 +14,8 @@ export default async function MeProfile() {
 
   const result = await accountApiRequest.me(sessionToken?.value ?? '')
   return (
-    <div>
-      <h1>Profile</h1>
+    <div className='container mx-auto max-w-md px-4 py-8'>
+      <h1 className='text-2xl font-bold text-blue-600'>Edit Profile</h1>
       <ProfileForm profile={result.payload.data} />
     </div>
   )

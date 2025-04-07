@@ -5,11 +5,13 @@ import { useAppContext } from '@/app/app-provider'
 import { Button } from '@/components/ui/button'
 import { handleErrorApi } from '@/lib/utils'
 import { usePathname, useRouter } from 'next/navigation'
+import { useCartStore } from '@/store/cart'
 
 export default function ButtonLogout() {
   const { setUser } = useAppContext()
   const router = useRouter()
   const pathname = usePathname()
+  const { items: cart, clearCart } = useCartStore()
   const handleLogout = async () => {
     try {
       await authApiRequest.logoutFromNextClientToNextServer()
@@ -23,6 +25,8 @@ export default function ButtonLogout() {
       })
     } finally {
       setUser(null)
+      localStorage.setItem('cartData', JSON.stringify(cart))
+      clearCart()
       router.refresh()
       localStorage.removeItem('sessionToken')
       localStorage.removeItem('sessionTokenExpiresAt')

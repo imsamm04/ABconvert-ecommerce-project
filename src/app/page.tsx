@@ -30,7 +30,11 @@ export default function Home() {
   const [showRating, setShowRating] = useState(false)
   const [freeShip, setFreeShip] = useState(false)
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isBlackFriday, setIsBlackFriday] = useState(false)
+  const [campaignStyle, setCampaignStyle] = useState('default')
 
+  console.log('campaignStyle', campaignStyle);
+  
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -87,12 +91,30 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(() => {
+    const savedCampaignStyle = localStorage.getItem('campaignStyle');
+    if (savedCampaignStyle) {
+      setCampaignStyle(savedCampaignStyle);
+    }
+  }, []);
+
   const filteredProducts = products.filter((product) =>
     (filterType === "All" || filterType === "" || product.type === filterType) &&
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const visibleProducts = filteredProducts.slice(0, visibleCount)
+
+  const productItemClass = campaignStyle === 'blackfriday' ? 'group border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 dark:bg-gray-800 bg-black text-white' : campaignStyle === 'christmas' ? 'group border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 dark:bg-green-800 bg-primary text-white' : 'group border rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 dark:bg-gray-800'
+
+  const clearLocalStorage = () => {
+    const hasSeenWelcomePopup = localStorage.getItem('hasSeenWelcomePopup');
+    localStorage.clear();
+    if (hasSeenWelcomePopup) {
+      localStorage.setItem('hasSeenWelcomePopup', hasSeenWelcomePopup);
+    }
+    window.location.reload();
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -123,36 +145,39 @@ export default function Home() {
         {visibleProducts.map((product) => (
           <div
             key={product.id}
-            className="group border rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 dark:bg-gray-800"
+            className={productItemClass}
           >
             <div className="relative h-64 overflow-hidden">
               <Image
                 src={product.image}
                 alt={product.name}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
               />
+              {campaignStyle === 'blackfriday' && <span className="absolute top-2 left-2 bg-yellow-500 text-black px-2 py-1 rounded-full">🔥 Hot Deal</span>}
+              {campaignStyle === 'christmas' && <span className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-full">🎄 Christmas Special</span>}
             </div>
-            <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300">{product.name}</h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+            <div className="p-4 flex-1 flex flex-col justify-between">
+              <h2 className="text-xl font-semibold mb-2 group-hover:text-yellow-500 transition-colors duration-300">{product.name}</h2>
+              <p className="text-gray-300 mb-4 line-clamp-2">
                 {product.description}
               </p>
               {freeShip && <span className="text-sm text-green-500">Free Shipping</span>}
               {showRating && <Rating defaultSelected={4} />}
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mt-4">
                 {version === 'B' && product.salePrice ? (
                   <div className="flex items-center">
                     <span className="text-xl font-bold text-red-500 line-through mr-2">${product.price.toFixed(2)}</span>
-                    <span className="text-xl font-bold text-primary">${product.salePrice.toFixed(2)}</span>
+                    <span className="text-xl font-bold text-yellow-500">${product.salePrice.toFixed(2)}</span>
                     <span className="ml-2 text-sm text-red-500">SALE OFF</span>
                   </div>
                 ) : (
-                  <span className="text-xl font-bold text-primary">${product.price.toFixed(2)}</span>
+                  <span className="text-xl font-bold text-yellow-500">${product.price.toFixed(2)}</span>
                 )}
-
+              </div>
+              <div className="pt-4 w-full">
                 <Link href={`/product/${product.id}`}>
-                  <Button>View Details</Button>
+                  <Button className="w-full bg-yellow-500 text-black hover:bg-yellow-600 transition duration-300">View Details</Button>
                 </Link>
               </div>
             </div>
@@ -165,7 +190,7 @@ export default function Home() {
         <DialogContent>
           <h2 className="text-xl font-bold mb-4">Hi there</h2>
           <p className="mb-4">
-            This version was built with limited time during the weekend, so it’s a simplified version with limited backend. Thank you for reviewing it!
+            This version was built with limited time during the weekend, so it's a simplified version with limited backend. Thank you for reviewing it!
           </p>
           <Button
             onClick={() => {
@@ -178,6 +203,9 @@ export default function Home() {
           </Button>
         </DialogContent>
       </Dialog>
+      <Button onClick={clearLocalStorage} className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition">
+        Clear Local Storage
+      </Button>
     </div>
   )
 }

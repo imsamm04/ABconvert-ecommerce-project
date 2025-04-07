@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { generateIdeas } from './abTestService';
@@ -20,6 +20,7 @@ export default function ABTestSettings() {
   const [showResult, setShowResult] = useState(false);
   const [aiIdeas, setAiIdeas] = useState('');
   const [loading, setLoading] = useState(false);
+  const [campaignStyle, setCampaignStyle] = useState('default');
 
   useEffect(() => {
     const iframe = document.querySelector('iframe');
@@ -43,7 +44,17 @@ export default function ABTestSettings() {
     }
     localStorage.setItem('showRating', showRating.toString());
     localStorage.setItem('freeShip', freeShip.toString());
+    localStorage.setItem('campaignStyle', campaignStyle);
     setIsDialogOpen(false);
+  };
+
+  const clearLocalStorage = () => {
+    const hasSeenWelcomePopup = localStorage.getItem('hasSeenWelcomePopup');
+    localStorage.clear();
+    if (hasSeenWelcomePopup) {
+      localStorage.setItem('hasSeenWelcomePopup', hasSeenWelcomePopup);
+    }
+    window.location.reload();
   };
 
   const handleGenerateIdeas = async () => {
@@ -107,38 +118,55 @@ export default function ABTestSettings() {
             ))}
           </SelectContent>
         </Select>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger asChild className='text-center'>
-          <Button className="bg-primary text-white px-4 py-2 shadow-md transition duration-300 " onClick={handleOpenDialog}>Customize Options</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <h2 className="text-xl font-bold mb-4">Customize A/B Test Options</h2>
-          <div className="flex items-center mb-4">
-            <Label className="mr-4 text-lg font-medium text-gray-700 dark:text-gray-300"> Name:</Label>
-            <Input
-              type="text"
-              value={newVersion}
-              onChange={(e) => setNewVersion(e.target.value)}
-              className="border border-gray-300 p-2 rounded-lg"
-              required
-            />
-          </div>
-          <div className="flex items-center mb-4">
-            <Label className="mr-4 text-lg font-medium text-gray-700 dark:text-gray-300">Show Rating:</Label>
-            <Switch checked={showRating} onCheckedChange={setShowRating} />
-          </div>
-          <div className="flex items-center mb-4">
-            <Label className="mr-4 text-lg font-medium text-gray-700 dark:text-gray-300">Free Ship:</Label>
-            <Switch checked={freeShip} onCheckedChange={setFreeShip} />
-          </div>
-          <Button onClick={handleApplyChanges} className="bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-primary-dark transition duration-300">Apply Changes</Button>
-        </DialogContent>
-      </Dialog>
-      <Button
-        onClick={handleGenerateIdeas}
-        className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-purple-700 transition"
-      >
-        {loading ? <Spinner /> : 'Generate A/B Test Ideas with OPEN AI'}
+        <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <SheetTrigger asChild className='text-center'>
+            <Button className="bg-primary text-white px-4 py-2 shadow-md transition duration-300 " onClick={handleOpenDialog}>Customize Options</Button>
+          </SheetTrigger>
+          <SheetContent>
+            <h2 className="text-xl font-bold mb-4">Customize A/B Test Options</h2>
+            <div className="flex items-center mb-4">
+              <Label className="mr-4 text-lg font-medium text-gray-700 dark:text-gray-300"> Name:</Label>
+              <Input
+                type="text"
+                value={newVersion}
+                onChange={(e) => setNewVersion(e.target.value)}
+                className="border border-gray-300 p-2 rounded-lg"
+                required
+              />
+            </div>
+            <div className="flex items-center mb-4">
+              <Label className="mr-4 text-lg font-medium text-gray-700 dark:text-gray-300">Show Rating:</Label>
+              <Switch checked={showRating} onCheckedChange={setShowRating} />
+            </div>
+            <div className="flex items-center mb-4">
+              <Label className="mr-4 text-lg font-medium text-gray-700 dark:text-gray-300">Free Ship:</Label>
+              <Switch checked={freeShip} onCheckedChange={setFreeShip} />
+            </div>
+           
+            <div className="flex items-center mb-4">
+              <Label className="mr-4 text-lg font-medium text-gray-700 dark:text-gray-300">Campaign Style:</Label>
+              <Select value={campaignStyle} onValueChange={setCampaignStyle}>
+                <SelectTrigger className="w-40 border border-gray-300 dark:border-gray-600 p-2 rounded-lg shadow-sm focus-visible:ring-offset-0 focus-visible:ring-0">
+                  <SelectValue placeholder="Select a style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="default">Default</SelectItem>
+                  <SelectItem value="blackfriday">Black Friday</SelectItem>
+                  <SelectItem value="christmas">Christmas</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button onClick={handleApplyChanges} className="bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:bg-primary-dark transition duration-300">Apply Changes</Button>
+          </SheetContent>
+        </Sheet>
+        <Button
+          onClick={handleGenerateIdeas}
+          className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-purple-700 transition"
+        >
+          {loading ? <Spinner /> : 'Generate A/B Test Ideas with OPEN AI'}
+        </Button>
+        <Button onClick={clearLocalStorage} className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition">
+        Refresh local storage
       </Button>
       </div>
 

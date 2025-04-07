@@ -4,9 +4,20 @@ import { Button } from "@/components/ui/button"
 import { useCartStore } from "@/store/cart"
 import Image from "next/image"
 import Link from "next/link"
+import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { toast } from '@/components/ui/use-toast'
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getTotal } = useCartStore()
+  const [showCheckout, setShowCheckout] = useState(false)
+
+  const handleOrderClick = () => {
+    toast({
+      title: 'Feature Incomplete',
+      description: 'This feature is not yet complete.'
+    })
+  }
 
   if (items.length === 0) {
     return (
@@ -16,6 +27,32 @@ export default function CartPage() {
         <Link href="/">
           <Button>Continue Shopping</Button>
         </Link>
+      </div>
+    )
+  }
+
+  if (showCheckout) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-lg">
+        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Address</h2>
+          <Input placeholder="John Doe" />
+          <Input placeholder="Country" />
+          <Input placeholder="Street" />
+          <Input placeholder="City" />
+          <div className="flex gap-4">
+            <Input placeholder="State" className="flex-1" />
+            <Input placeholder="ZIP" className="flex-1" />
+          </div>
+          <h2 className="text-xl font-semibold mt-6">Card Information</h2>
+          <Input placeholder="1234 1234 1234 1234" />
+          <div className="flex gap-4">
+            <Input placeholder="MM/YY" className="flex-1" />
+            <Input placeholder="CVC" className="flex-1" />
+          </div>
+          <Button className="w-full mt-6" onClick={handleOrderClick}>Order</Button>
+        </div>
       </div>
     )
   }
@@ -88,7 +125,7 @@ export default function CartPage() {
                 </div>
               </div>
             </div>
-            <Button className="w-full mt-6">Proceed to Checkout</Button>
+            <Button className="w-full mt-6" onClick={() => setShowCheckout(true)}>Proceed to Checkout</Button>
           </div>
         </div>
       </div>
