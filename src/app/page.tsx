@@ -188,7 +188,7 @@ export default function Home() {
       <div ref={loadMoreRef} className="h-10"></div>
       <Dialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <DialogContent>
-          <h2 className="text-xl font-bold mb-4">Hi there</h2>
+          <h2 className="text-xl font-bold mb-4">Hi there <img src="/images/smile.png" alt="Robot Icon" className="inline-block w-6 h-6 ml-2" /></h2>
           <p className="mb-4">
             This version was built with limited time during the weekend, so it's a simplified version with limited backend. Thank you for reviewing it!
           </p>
